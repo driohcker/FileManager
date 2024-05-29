@@ -223,18 +223,18 @@ void CommandProcessor::listDirectory() {
 }
 
 void CommandProcessor::helpList() {
-    cout << setw(12) << "create_user" << "---创建用户" << endl;
-    cout << setw(12) << "login" << "---登录" << endl;
-    cout << setw(12) << "logout" << "---退出登录" << endl;
-    cout << setw(12) << "create_file" << "---创建文件" << endl;
-    cout << setw(12) << "open_file" <<  "---打开文件" << endl;
-    cout << setw(12) << "close_file" << "---关闭文件" << endl;
-    cout << setw(12) << "delete_file" <<  "---删除文件" << endl;
-    cout << setw(12) << "read_file" <<  "---读文件" << endl;
-    cout << setw(12) << "write_file" <<  "---写文件" << endl;
-    cout << setw(12) << "copy_file" <<  "---复制文件" << endl;
-    cout << setw(12) << "list_dir" << "---列出文件" << endl;
-    cout << setw(12) << "" << setw(12) << "" << endl;
+    cout << setw(15) << left << "create_user"   << left << setw(61) << "create_user <username>"                                     << left << setw(50) << "---create a user to use file system"            << endl;
+    cout << setw(15) << left << "login"         << left << setw(61) << "login <username>"                                           << left << setw(50) << "---login user account which has been created"   << endl;
+    cout << setw(15) << left << "logout"        << left << setw(61) << "logout"                                                     << left << setw(50) << "---logout a user account which is logined"      << endl;
+    cout << setw(15) << left << "create_file"   << left << setw(61) << "create_file <filename> <permissions(read/write/execute)>"   << left << setw(50) << "---create a file and define its permission"     << endl;
+    cout << setw(15) << left << "open_file"     << left << setw(61) << "open_file <filename>"                                       << left << setw(50) << "---open a file if it has been created"          << endl;
+    cout << setw(15) << left << "close_file"    << left << setw(61) << "close_file <filename>"                                      << left << setw(50) << "---close open file"                             << endl;
+    cout << setw(15) << left << "delete_file"   << left << setw(61) << "delete_file <filename>"                                     << left << setw(50) << "---delete a created file"                       << endl;
+    cout << setw(15) << left << "read_file"     << left << setw(61) << "read_file <filename>"                                       << left << setw(50) << "---just read this file"                         << endl;
+    cout << setw(15) << left << "write_file"    << left << setw(61) << "write_file <filename> <content>"                            << left << setw(50) << "---write a few of contents to a file"           << endl;
+    cout << setw(15) << left << "copy_file"     << left << setw(61) << "copy_file <sourcefilename> <tagetfilename>"                 << left << setw(50) << "---copy a file to another file"                 << endl;
+    cout << setw(15) << left << "list_dir"      << left << setw(61) << "list_dir" << "---show current file list"                    << left << setw(50) << endl;
+    cout << setw(15) << left << "" << setw(30) << "" << endl;
 }
 
 vector<string> CommandProcessor::splitCommand(const string& command) {
