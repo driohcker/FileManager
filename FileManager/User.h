@@ -13,6 +13,7 @@ public:
     shared_ptr<Directory> rootDirectory;
 
     User(const string& username);
+    string getUsername();
 };
 
 #endif

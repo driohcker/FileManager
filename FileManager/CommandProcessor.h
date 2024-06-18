@@ -3,8 +3,9 @@
 
 #include <string>
 #include <vector>
-#include "File.h"
 #include "FileSystem.h"
+
+using namespace std;
 
 class CommandProcessor {
 public:
@@ -22,9 +23,12 @@ private:
     void writeFile(const string& filename, const string& content);
     void copyFile(const string& srcFilename, const string& destFilename);
     void listDirectory();
+    void changeDirectory(const string& path);
+    void createDirectory(const string& dirname);
+    void printAllDirectory();
     void helpList();
 
     vector<string> splitCommand(const string& command);
 };
 
-#endif
+#endif // COMMANDPROCESSOR_H

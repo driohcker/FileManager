@@ -9,8 +9,9 @@ int main() {
     CommandProcessor cp(fs);
 
     string command;
+    
     while (true) {
-        cout << "> ";
+        cout << fs.getCurrentPath() << " > ";
         getline(cin, command);
         if (command == "exit") break;
         cp.execute(command);
