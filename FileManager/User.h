@@ -10,6 +10,7 @@ using namespace std;
 class User {
 public:
     string username;
+    string password;
     shared_ptr<Directory> rootDirectory;
 
     User(const string& username);

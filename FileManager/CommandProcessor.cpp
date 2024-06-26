@@ -6,9 +6,17 @@
 
 using namespace std;
 
+/*
+ * 命令处理类的构造函数
+ * 传入文件管理系统对象方便执行命令
+ */
 CommandProcessor::CommandProcessor(FileSystem& filesystem)
     : filesystem(filesystem) {}
 
+/*
+ * 该函数用于实现分析输入的命令
+ *
+ */
 vector<string> CommandProcessor::splitCommand(const string& command) {
     istringstream iss(command);
     vector<string> parts;
@@ -19,88 +27,93 @@ vector<string> CommandProcessor::splitCommand(const string& command) {
     return parts;
 }
 
+/*
+ * 该函数用于对输入的命令进行执行
+ * 并给出当输入错误指令时的输入建议提示
+ */
 void CommandProcessor::execute(const string& command) {
     vector<string> parts = splitCommand(command);
     if (parts.empty()) return;
 
     const string& cmd = parts[0];
-    if (cmd == "create_user") {
+    if (cmd == "newuser") {
         if (parts.size() == 2) {
             filesystem.addUser(parts[1]);
         }
         else {
-            cout << "Usage: create_user <username>" << endl;
+            cout << "error: create_user <username>" << endl;
         }
     }
     else if (cmd == "login") {
         if (parts.size() == 2) {
             filesystem.login(parts[1]);
+            cout << "Welcome!" << parts[1] << endl;
         }
         else {
-            cout << "Usage: login <username>" << endl;
+            cout << "error: login <username>" << endl;
         }
     }
     else if (cmd == "logout") {
         filesystem.logout();
     }
-    else if (cmd == "create_file") {
+    else if (cmd == "newfile") {
         if (parts.size() == 3) {
             createFile(parts[1], parts[2]);
         }
         else {
-            cout << "Usage: create_file <filename> <permissions>" << endl;
+            cout << "error: create_file <filename> <permissions>" << endl;
         }
     }
-    else if (cmd == "open_file") {
+    else if (cmd == "open") {
         if (parts.size() == 2) {
             openFile(parts[1]);
         }
         else {
-            cout << "Usage: open_file <filename>" << endl;
+            cout << "error: open_file <filename>" << endl;
         }
     }
-    else if (cmd == "close_file") {
+    else if (cmd == "close") {
         if (parts.size() == 2) {
             closeFile(parts[1]);
         }
         else {
-            cout << "Usage: close_file <filename>" << endl;
+            cout << "error: close_file <filename>" << endl;
         }
     }
-    else if (cmd == "delete_file") {
+    else if (cmd == "delete") {
         if (parts.size() == 2) {
             deleteFile(parts[1]);
         }
         else {
-            cout << "Usage: delete_file <filename>" << endl;
+            cout << "error: delete_file <filename>" << endl;
         }
     }
-    else if (cmd == "read_file") {
+    else if (cmd == "read") {
         if (parts.size() == 2) {
             readFile(parts[1]);
         }
         else {
-            cout << "Usage: read_file <filename>" << endl;
+            cout << "error: read_file <filename>" << endl;
         }
     }
-    else if (cmd == "write_file") {
+    else if (cmd == "write") {
         if (parts.size() >= 3) {
             string content = command.substr(command.find(parts[1]) + parts[1].length() + 1);
             writeFile(parts[1], content);
         }
         else {
-            cout << "Usage: write_file <filename> <content>" << endl;
+            cout << "error: write_file <filename> <content>" << endl;
         }
     }
-    else if (cmd == "copy_file") {
+    else if (cmd == "copy") {
         if (parts.size() == 3) {
             copyFile(parts[1], parts[2]);
         }
         else {
-            cout << "Usage: copy_file <srcFilename/srcFilePath> <destFilename/destFilePath>" << endl;
+            cout << "error: copy_file <srcFilename/srcFilePath> <destFilename/destFilePath>" << endl;
         }
     }
-    else if (cmd == "list_dir") {
+    else if (cmd == "list") {
         listDirectory();
     }
     else if (cmd == "cd") {
@@ -108,7 +121,7 @@ void CommandProcessor::execute(const string& command) {
             changeDirectory(parts[1]);
         }
         else {
-            cout << "Usage: cd <path>" << endl;
+            cout << "error: cd <path>" << endl;
         }
     }
     else if (cmd == "mkdir") {
@@ -116,10 +129,10 @@ void CommandProcessor::execute(const string& command) {
             createDirectory(parts[1]);
         }
         else {
-            cout << "Usage: mkdir <dirname>" << endl;
+            cout << "error: mkdir <dirname>" << endl;
         }
     }
-    else if (cmd == "prtAllDir") {
+    else if (cmd == "listAll") {
         if (parts.size() == 1) {
             printAllDirectory();
         }
@@ -128,10 +141,14 @@ void CommandProcessor::execute(const string& command) {
         helpList();
     }
     else {
-        cout << "Unknown command." << endl;
+        cout << "Unknown command.Please type \"help\" for more information" << endl;
     }
 }
 
+/*
+ * 该函数用于创建文件，输入为文件名和权限
+ *
+ */
 void CommandProcessor::createFile(const string& filename, const string& permissions) {
     if (filesystem.currentUser) {
         auto currentDirectory = filesystem.currentDirectory;
@@ -149,6 +166,10 @@ void CommandProcessor::createFile(const string& filename, const string& permissi
     }
 }
 
+/*
+ * 该函数用于实现打开文件
+ *
+ */
 void CommandProcessor::openFile(const string& filename) {
     if (filesystem.currentUser) {
         auto currentDirectory = filesystem.currentDirectory;
@@ -165,6 +186,10 @@ void CommandProcessor::openFile(const string& filename) {
     }
 }
 
+/*
+ * 该函数用于实现关闭文件
+ *
+ */
 void CommandProcessor::closeFile(const string& filename) {
     if (filesystem.currentUser) {
         auto currentDirectory = filesystem.currentDirectory;
@@ -181,6 +206,10 @@ void CommandProcessor::closeFile(const string& filename) {
     }
 }
 
+/*
+ * 该函数用于实现删除文件
+ *
+ */
 void CommandProcessor::deleteFile(const string& filename) {
     if (filesystem.currentUser) {
         auto currentDirectory = filesystem.currentDirectory;
@@ -197,6 +226,10 @@ void CommandProcessor::deleteFile(const string& filename) {
     }
 }
 
+/*
+ * 该函数用于实现读取文件
+ *
+ */
 void CommandProcessor::readFile(const string& filename) {
     if (filesystem.currentUser) {
         auto currentDirectory = filesystem.currentDirectory;
@@ -218,6 +251,10 @@ void CommandProcessor::readFile(const string& filename) {
     }
 }
 
+/*
+ * 该函数用于实现修改文件
+ *
+ */
 void CommandProcessor::writeFile(const string& filename, const string& content) {
     if (filesystem.currentUser) {
         auto currentDirectory = filesystem.currentDirectory;
@@ -240,6 +277,10 @@ void CommandProcessor::writeFile(const string& filename, const string& content) 
     }
 }
 
+/*
+ * 该函数用于实现复制文件
+ *
+ */
 void CommandProcessor::copyFile(const string& srcPath, const string& destDirPath) {
     if (filesystem.currentUser) {
         // 解析源文件路径
@@ -272,8 +313,10 @@ void CommandProcessor::copyFile(const string& srcPath, const string& destDirPath
     }
 }
 
-
-
+/*
+ * 该函数用于实现展示当前目录的所有文件
+ *
+ */
 void CommandProcessor::listDirectory() {
     if (filesystem.currentUser) {
         auto currentDirectory = filesystem.currentDirectory;
@@ -290,31 +333,44 @@ void CommandProcessor::listDirectory() {
     }
 }
 
+/*
+ * 该函数用于实现更改当前目录至指定目录
+ */
 void CommandProcessor::changeDirectory(const string& path) {
     filesystem.changeDirectory(path);
 }
 
+/*
+ * 该函数用于实现创建目录
+ */
 void CommandProcessor::createDirectory(const string& dirname) {
     filesystem.createDirectory(dirname);
 }
 
+/*
+ * 该函数用于实现显示当前用户的所有文件
+ */
 void CommandProcessor::printAllDirectory() {
     filesystem.printUserDirectoryTree(filesystem.currentUser->getUsername());
 }
 
+/*
+ * 该函数用于实现help清单的实现
+ */
 void CommandProcessor::helpList() {
-    cout << setw(15) << left << "create_user" << left << setw(61) << "create_user <username>" << left << setw(50) << "---create a user to use file system" << endl;
+    cout << setw(15) << left << "newuser" << left << setw(61) << "newuser <username>" << left << setw(50) << "---create a user to use file system" << endl;
     cout << setw(15) << left << "login" << left << setw(61) << "login <username>" << left << setw(50) << "---login user account which has been created" << endl;
     cout << setw(15) << left << "logout" << left << setw(61) << "logout" << left << setw(50) << "---logout a user account which is logined" << endl;
-    cout << setw(15) << left << "create_file" << left << setw(61) << "create_file <filename> <permissions(read/write/execute)>" << left << setw(50) << "---create a file and define its permission" << endl;
-    cout << setw(15) << left << "open_file" << left << setw(61) << "open_file <filename>" << left << setw(50) << "---open a file if it has been created" << endl;
-    cout << setw(15) << left << "close_file" << left << setw(61) << "close_file <filename>" << left << setw(50) << "---close open file" << endl;
-    cout << setw(15) << left << "delete_file" << left << setw(61) << "delete_file <filename>" << left << setw(50) << "---delete a created file" << endl;
-    cout << setw(15) << left << "read_file" << left << setw(61) << "read_file <filename>" << left << setw(50) << "---just read this file" << endl;
-    cout << setw(15) << left << "write_file" << left << setw(61) << "write_file <filename> <content>" << left << setw(50) << "---write a few of contents to a file" << endl;
-    cout << setw(15) << left << "copy_file" << left << setw(61) << "copy_file <sourcefilename> <tagetfilename>" << left << setw(50) << "---copy a file to another file" << endl;
-    cout << setw(15) << left << "list_dir" << left << setw(61) << "list_dir" << "---show current file list" << left << setw(50) << endl;
-    cout << setw(15) << left << "cd" << left << setw(61) << "cd <dirpath>" << "---open a directory" << left << setw(50) << endl;
-    cout << setw(15) << left << "mkdir" << left << setw(61) << "mkdir <dirname>" << "---create a directory" << left << setw(50) << endl;
+    cout << setw(15) << left << "newfile" << left << setw(61) << "newfile <filename> <permissions(read/write/execute)>" << left << setw(50) << "---create a file and define its permission" << endl;
+    cout << setw(15) << left << "open" << left << setw(61) << "open <filename>" << left << setw(50) << "---open a file if it has been created" << endl;
+    cout << setw(15) << left << "close" << left << setw(61) << "close <filename>" << left << setw(50) << "---close open file" << endl;
+    cout << setw(15) << left << "delete" << left << setw(61) << "delete <filename>" << left << setw(50) << "---delete a created file" << endl;
+    cout << setw(15) << left << "read" << left << setw(61) << "read <filename>" << left << setw(50) << "---just read this file" << endl;
+    cout << setw(15) << left << "write" << left << setw(61) << "write <filename> <content>" << left << setw(50) << "---write a few of contents to a file" << endl;
+    cout << setw(15) << left << "copy" << left << setw(61) << "copy <sourcefilename> <tagetfilename>" << left << setw(50) << "---copy a file to another file" << endl;
+    cout << setw(15) << left << "list" << left << setw(61) << "list" << left << setw(50) <<"---show current file list" << endl;
+    cout << setw(15) << left << "listAll" << left << setw(61) << "listAll" << left << setw(50) << "---show all file list" << endl;
+    cout << setw(15) << left << "cd" << left << setw(61) << "cd <dirpath>" << left << setw(50) << "---open a directory" << endl;
+    cout << setw(15) << left << "mkdir" << left << setw(61) << "mkdir <dirname>" << left << setw(50) << "---create a directory" << endl;
     cout << setw(15) << left << "" << setw(30) << "" << endl;
 }

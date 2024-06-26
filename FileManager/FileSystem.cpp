@@ -1,13 +1,20 @@
 #include "FileSystem.h"
 #include <iostream>
 #include <sstream>
-
+#include <chrono>
 using namespace std;
 
+/*
+ * 文件系统类的构造函数
+ * InitTest函数仅用于方便传入初始化数据用于测试
+ */
 FileSystem::FileSystem() : currentDirectory(nullptr) {
     InitTest();
 }
 
+/*
+ * 该函数用于实现增加用户
+ */
 void FileSystem::addUser(const string& username) {
     if (users.find(username) != users.end()) {
         cout << "User " << username << " already exists." << endl;
@@ -18,6 +25,9 @@ void FileSystem::addUser(const string& username) {
     }
 }
 
+/*
+ * 该函数用于实现对创建的用户进行登录操作
+ */
 void FileSystem::login(const string& username) {
     if (users.find(username) != users.end()) {
         currentUser = users[username];
@@ -29,6 +39,9 @@ void FileSystem::login(const string& username) {
     }
 }
 
+/*
+ * 该函数实现了用户的登出操作
+ */
 void FileSystem::logout() {
     if (currentUser) {
         cout << "User " << currentUser->username << " logged out." << endl;
@@ -40,6 +53,9 @@ void FileSystem::logout() {
     }
 }
 
+/*
+ * 该函数实现了更改当前目录至目标目录
+ */
 void FileSystem::changeDirectory(const string& path) {
     auto newDirectory = navigateToDirectory(path);
     if (newDirectory) {
@@ -51,6 +67,9 @@ void FileSystem::changeDirectory(const string& path) {
     }
 }
 
+/*
+ * 该函数用于实现创建目录
+ */
 void FileSystem::createDirectory(const string& dirname) {
     if (currentDirectory->subdirectories.find(dirname) == currentDirectory->subdirectories.end()) {
         currentDirectory->subdirectories[dirname] = make_shared<Directory>(dirname, currentDirectory);
@@ -61,16 +80,23 @@ void FileSystem::createDirectory(const string& dirname) {
     }
 }
 
+/*
+ * 该函数用于实现获取当前目录的路径
+ */
 string FileSystem::getCurrentPath() const {
     string path;
     shared_ptr<Directory> dir = currentDirectory;
     while (dir) {
-        path = "/" + dir->name + path;
+        path = "/" + dir->getname() + path;
         dir = (dir->parent != nullptr) ? shared_ptr<Directory>(dir->parent) : nullptr;
     }
     return path.empty() ? "/" : path;
 }
 
+/*
+ * 该函数用于对传入的路径地址进行识别
+ * 并使当前目录指向传入的路径地址
+ */
 shared_ptr<Directory> FileSystem::navigateToDirectory(const string& path) const {
     istringstream iss(path);
     string token;
@@ -95,8 +121,11 @@ shared_ptr<Directory> FileSystem::navigateToDirectory(const string& path) const 
     return dir;
 }
 
+/*
+ * 该函数用于实现显示当前目录下的所有文件和目录
+ */
 void FileSystem::printDirectoryTree(const shared_ptr<Directory>& dir, const string& prefix) {
-    cout << prefix << dir->name << "/" << endl;
+    cout << prefix << dir->getname() << "/" << endl;
     for (const auto& entry : dir->subdirectories) {
         printDirectoryTree(entry.second, prefix + "    |");
     }
@@ -105,6 +134,9 @@ void FileSystem::printDirectoryTree(const shared_ptr<Directory>& dir, const stri
     }
 }
 
+/*
+ * 该函数用于打印当前用户的所有文件和目录
+ */
 void FileSystem::printUserDirectoryTree(const string& username) {
     auto userIt = users.find(username);
     if (userIt != users.end()) {
@@ -115,6 +147,10 @@ void FileSystem::printUserDirectoryTree(const string& username) {
     }
 }
 
+/*
+ * 文件系统类的构造函数
+ * 仅用于方便传入初始化数据用于测试
+ */
 void FileSystem::InitTest() {
     
     string username = "user1";
